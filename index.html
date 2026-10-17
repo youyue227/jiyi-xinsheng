@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#141411"><meta name="description" content="机忆新生——国货运动时期工业产品类型交互可视化设计。沿时间轴与分类图谱阅读1930—1937年《机联会刊》3952张原始广告，探索产业、材料与生活用途。"><title>机忆新生 · 国货运动时期工业产品类型交互可视化设计</title><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="cover.css"><script type="module" src="app.js"></script><script type="module" src="cover.js"></script></head>
+<body>
+<section id="projectCover" class="project-cover" aria-label="机忆新生项目封面">
+ <aside id="coverIntro" class="cover-intro" aria-label="项目介绍与操作指引"><div class="intro-layout">
+  <a class="brand cover-brand" href="./" aria-label="机忆新生首页"><b>机忆新生</b><small>《机联会刊》 · 工业产品广告档案</small></a>
+  <div class="intro-overview"><p class="intro-kicker">PROJECT OVERVIEW · 项目介绍</p>
+   <p>布匹、胶鞋、肥皂、药品……《机联会刊》中的广告，保存了国货运动时期丰富的产品图像与商品信息，也为我们观察近代工业与日常生活提供了一扇窗口。</p>
+   <p>“机忆新生”以1930—1937年的3952张广告为基础，通过原图识读、产品分类与交互可视化，连接产业门类、材料、生活用途与刊登位置，将分散的历史图像转化为可以探索、比较与追溯的数字档案。</p>
+   <p>面向专业研究者与公众，以直观的交互重读近代工业与日常生活，为中国近现代工业设计研究及历史文化传播提供新的阅读入口。</p>
+  </div>
+  <div class="intro-stats"><span>1930—1937</span><span>3,952张广告</span><span>20个产业门类</span></div>
+  <div class="intro-operations"><h2>操作指引</h2><ol class="intro-guide">
+   <li><b>封面探索</b><span>移到产品图像上，查看一级产业归属；点击箭头展开或收起介绍。</span></li>
+   <li><b>沿时间浏览</b><span>拖动画面、滚轮缩放；拖动底部金色窗口或两端，定位年份、期号和页码。</span></li>
+   <li><b>多维筛选</b><span>按产业、材料、用途筛选或搜索；对应广告在原位高亮，保留时间位置。</span></li>
+   <li><b>比较与关联</b><span>底部折线图比较年度变化；“视图”切换图谱，逐层展开产品、期刊与图片。</span></li>
+   <li><b>回到原图</b><span>单击广告查看大图和逐项信息；点击“机忆新生”返回封面。</span></li>
+  </ol></div>
+  <p class="intro-closing">让沉睡的工业记忆，在数字时代重新生长。</p>
+ </div></aside>
+ <button id="introToggle" class="intro-toggle" aria-expanded="true" aria-controls="coverIntro" aria-label="收起项目介绍"><span aria-hidden="true">‹</span></button>
+ <div class="cover-exhibition"><div id="productCollage" class="product-collage" aria-label="20个一级门类的真实广告图像拼贴"><p class="cover-loading">正在展开历史图像…</p></div><button id="enterArchive" class="enter-archive"><span>进入档案<small>开始探索 · 1930—1937</small></span><i aria-hidden="true">↗</i></button></div>
+ <div id="coverLabel" class="cover-label" hidden role="status"><strong id="coverCategory"></strong></div>
+</section>
+<header class="masthead">
+ <a class="brand" href="./"><b>机忆新生</b><small>《机联会刊》 · 工业产品广告档案</small></a>
+ <nav class="entry-tabs" aria-label="浏览入口"><button class="entry active" data-mode="industry"><span>01</span>产业门类<i>↗</i></button><button class="entry" data-mode="material"><span>02</span>材料<i>↗</i></button><button class="entry" data-mode="use"><span>03</span>生活用途<i>↗</i></button></nav>
+ <div class="header-actions"><label class="search"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8" cy="8" r="5.5"/><path d="m12 12 5 5"/></svg><input type="search" id="search" placeholder="产品、品牌、企业、编号" aria-label="搜索产品、品牌、企业或图片编号"></label><button id="reset" class="reset">重置</button><button id="help" class="circle" aria-label="浏览说明">?</button><div class="view-switch"><button id="viewButton" class="view-button" aria-expanded="false" aria-controls="viewMenu">视图 <span>⌄</span></button><div id="viewMenu" class="view-menu" hidden><button data-view="overview" aria-pressed="true"><b>总览模式</b><small>沿年份、期号、页码浏览</small></button><button data-view="graph" aria-pressed="false"><b>图谱模式</b><small>产品 → 期刊 → 广告原图</small></button></div></div><button id="filterToggle" class="mobile-filter">筛选</button></div>
+</header>
+<main class="archive-workspace">
+ <section class="visual-area" aria-label="广告时间轴">
+  <div class="active-filters" id="activeFilters" aria-live="polite" hidden></div>
+  <div class="canvas-wrap" id="canvasWrap">
+   <canvas id="archiveCanvas" tabindex="0" role="img" aria-label="可拖动与缩放的广告图像时间轴；使用方向键浏览，点击广告查看详情"></canvas>
+   <div class="view-tools"><button id="zoomOut" aria-label="缩小时间轴">−</button><span id="zoomLevel">全景</span><button id="zoomIn" aria-label="放大时间轴">+</button><button id="fitAll">全景</button></div>
+   <div id="loading" class="loading"><span class="loader"></span><b>正在铺开广告档案</b><small>1930—1937 · 3952张原始广告</small></div>
+   <div id="empty" class="empty" hidden><span>∅</span><h2>没有符合这组条件的广告</h2><p>试着移除一个条件，或重新浏览全部广告。</p><button id="emptyReset">清空筛选</button></div>
+   <div class="gesture-hint"><span class="drag-symbol">↔</span><b>拖动浏览</b><span>滚轮缩放 · 单击看原图</span></div>
+   <div class="position-readout" id="positionReadout">年份 → 期号 → 页码</div>
+   <div id="hoverPreview" class="hover-preview" hidden><img id="hoverImage" alt="广告预览"><div id="hoverTitle"></div><small id="hoverMeta"></small><div id="hoverStripe" class="hover-stripe"></div></div>
+  </div>
+  <section id="graphPanel" class="graph-panel" hidden aria-label="产品分类关系图谱">
+   <div class="graph-toolbar"><button id="graphBack" disabled>← 返回上一层</button><nav id="graphBreadcrumb" aria-label="图谱层级路径"></nav><div class="graph-tools"><button id="graphMinus" aria-label="缩小图谱">−</button><span id="graphScale">100%</span><button id="graphPlus" aria-label="放大图谱">+</button><button id="graphFit">适应</button></div></div>
+   <div class="graph-viewport" id="graphViewport" tabindex="0" aria-label="拖动浏览图谱，节点可逐层展开"><svg id="graphSvg" xmlns="http://www.w3.org/2000/svg" aria-label="一级、二级、三级产品、年份期刊及广告图片关联图"></svg></div>
+   <div class="graph-bottom"><div><span id="graphStage"></span><small id="graphHint">点击圆形节点展开下一层；点击图片阅读广告。</small></div></div>
+  </section>
+  <section id="timelinePanel" class="timeline-panel" aria-label="可拖动时间导航">
+   <div class="timeline-caption"><div><span class="timeline-dot"></span><b>时间导航</b><span id="rangeCaption">1930—1937年</span></div><span class="drag-tip"><span>↔</span> 拖动金色窗口 · 拉动两端缩放</span></div>
+   <canvas id="axisCanvas" aria-label="年份与期刊号刻度"></canvas>
+   <div class="navigator" id="navigator" tabindex="0" role="group" aria-label="拖动窗口移动，拖动左右把手改变时间范围"><canvas id="miniCanvas"></canvas><div class="time-window" id="timeWindow"><button class="window-handle left" data-edge="left" aria-label="拖动左端缩放时间范围"><i></i></button><span class="window-grip">⋮⋮</span><button class="window-handle right" data-edge="right" aria-label="拖动右端缩放时间范围"><i></i></button></div></div>
+   <div class="year-shortcuts" id="yearShortcuts" aria-label="跳转年份"></div>
+  </section>
+  <section id="trendsPanel" class="trends-panel" hidden aria-label="年度数量变化与条件比较"><header class="trends-heading"><div><b>年度数量变化</b><span id="trendMetric">产品提及数</span><small id="trendCondition"></small></div><button id="trendCollapse">收起</button></header><div id="trendCards" class="trend-cards"></div><p class="trend-note">1930—1937 · 四图共用纵轴 · 对照条件独立统计 · 移动鼠标用十字线读取年份与数量 · 点击“更换条件”选择对照</p></section>
+  <footer class="plot-footer"><span>《机联会刊》广告档案</span><span id="scopeText">3952张 / 172期 / 8年</span><button id="method">数据与标注说明 ↗</button></footer>
+ </section>
+ <aside class="sidebar" id="sidebar" aria-label="筛选与行业图例">
+  <div class="sidebar-heading"><div><p class="eyebrow" id="facetEyebrow">INDUSTRY INDEX</p><h2 id="facetTitle">产业门类</h2></div><button id="clearMode">清空本栏</button><button class="mobile-close" id="closeSidebar" aria-label="关闭筛选">×</button></div>
+  <div class="metric-control" role="group" aria-label="统计口径"><button data-metric="mentions" aria-pressed="true">产品提及数</button><button data-metric="ads" aria-pressed="false">广告图片数</button></div><div class="selection-summary"><strong id="resultCount">6,142</strong><span id="countUnit">次产品提及</span><small id="periodCount">3,952张广告 · 172期</small></div>
+  <p class="facet-description" id="facetDescription">点击颜色浏览产业；展开可选二级类别。</p>
+  <div class="facet-list" id="facetList"></div>
+  <div class="sidebar-note"><span class="tiny-stripe"><i></i><i></i><i></i></span><p>图底色条对应一级产业。<br>多门类广告使用分段色条。</p></div>
+  <div class="sidebar-bottom"><span><b id="matchingItems">6,142</b> 个产品标注项</span><button id="export" aria-label="导出当前筛选广告">导出 ↗</button></div>
+ </aside>
+</main>
+<dialog id="detailDialog" class="detail-dialog">
+ <header class="detail-header"><div><span id="detailLocation"></span><small id="detailId"></small></div><div><button id="prevAd" aria-label="上一张广告">←</button><button id="nextAd" aria-label="下一张广告">→</button><button id="closeDetail" class="circle" aria-label="关闭广告详情">×</button></div></header>
+ <div class="detail-body"><section class="original-pane"><div class="image-controls"><span>广告原图</span><div><button id="imageMinus" aria-label="缩小原图">−</button><span id="imageScale">100%</span><button id="imagePlus" aria-label="放大原图">+</button><button id="imageFit" aria-label="原图适应边界">适应</button><button id="imageRotate" aria-label="旋转原图">↻</button><a id="downloadImage" download>下载原图 ↗</a></div></div><div class="original-scroll" id="originalScroll"><div class="original-stage" id="originalStage"><img id="originalImage" alt="原始广告图像"></div></div><div class="detail-industry-stripe" id="detailStripe"></div><p>默认等比适应边界 · 放大可核对广告文字</p></section><section class="detail-content"><p class="eyebrow">READ THE ADVERTISEMENT</p><h2 id="detailTitle"></h2><p id="detailEntities"></p><div id="detailProducts"></div><div class="detail-empty" id="detailEmpty" hidden>这张图片未保留可确认的具体产品，原图仍作为档案展示。</div></section></div>
+</dialog>
+<dialog id="helpDialog" class="help-dialog"><button id="closeHelp" class="circle" aria-label="关闭说明">×</button><p class="eyebrow">机忆新生 / READING GUIDE</p><h2>把时间拉近，<br>把产品看清。</h2><div class="guide-grid"><div><b>01 · 沿时间浏览</b><p>广告按年份、期号、页码排序。拖动图像区域平移；滚轮或＋／−缩放。放大后可以上下拖动浏览同一期不同页码。</p></div><div><b>02 · 使用时间导航</b><p>点击年份跳转；拖动金色窗口移动时间范围。拉动窗口两端可改变范围，年份、期号刻度随缩放展开。</p></div><div><b>03 · 三个观察入口</b><p>产业门类、材料、生活用途共享同一份数据。同一栏多选取并集，跨入口条件在同一个产品上取交集。筛选后原位置不变，匹配广告高亮，其余广告淡化。</p></div><div><b>04 · 从图像到产品</b><p>悬停预览，单击查看大图、企业品牌与逐项分类。可在详情中点击标签继续筛选，或使用左右按钮逐张阅读。</p></div></div><h3>年度数量比较</h3><p>选择筛选条件后，总览底部显示年度折线图。第一张统计当前全部筛选条件的交集，另外三张可选择独立对照条件；菜单先呈现产业门类、材料、生活用途，再逐层展开具体条件。点击条件名称旁的“更换条件”选择对照。四图共用纵轴，移动鼠标时十字线同步显示年份及纵轴数量；统计口径与侧栏同步。年度变化反映广告中的产品提及或图片数量。</p><h3>图谱模式</h3><p>右上角“视图”可切换总览与图谱。点击节点依次展开一级产业门类、二级产品大类、三级标准产品通名、年份与期刊，再查看该期广告原图。期刊圆圈中的31-25表示1931年第25期，年份与期号从上到下依次排列，本期图片按页码排列。图谱首页整体居中。展开时保留上一层同级分支，选中圆圈平滑向右移动，新分支从该圆圈向右半环绕展开；每屏最多显示两个相邻分类层级，更早层级收回到顶部路径。全部节点和图片不分页，可拖动或缩放浏览。使用返回上一层或路径按钮回溯。筛选与搜索条件在两种视图中保留，图谱中的匹配节点与图片保持高亮。节点默认统计产品提及数，可切换为不重复广告图片数；圆圈面积随数量增大，设置最小尺寸保证文字可读，多产品广告可以连接到多个分类路径。无产品标注的两张图像使用“未标注二级 / 未确认产品”作为导航占位，不新增产品标注。</p><h3>资料与统计口径</h3><p>收录1930—1937年3952张广告图片，172期，6142条产品及其他分类标注项。重复刊登按各自图片编号保留。侧栏默认统计产品提及数：每个已标注产品条目计一次，同图多个产品分别计数，重复刊登分别计数。可切换广告图片数，同一类别内按图片编号去重。没有产品标注的两张图片在提及口径下为零，在图片口径下仍计入“其他”。材料与用途可多选，因此标签数量不可直接相加。</p><p>材料无法确认时标“未知”，非实物商品标“不适用”；晒衣竹竿套按已复核结果标为“竹”。两个已删除全部产品的记录仍保留图像，未新增产品。时间轴中的页码来自图片编号最后一段。</p><p>来源：1930—1937年《机联会刊》广告产品分类汇总最新复核结果及对应原始图像。</p><a href="data.json" download>下载完整数据 JSON ↗</a></dialog>
+<div class="toast" id="toast" role="status"></div>
+</body></html>
