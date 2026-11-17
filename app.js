@@ -1,6 +1,6 @@
-import {unique,productMatches,filterRecords,facetCounts,createLayout,layoutVisible,countMatches} from './engine.js';
+import {unique,productMatches,filterRecords,facetCounts,createLayout,layoutVisible,countMatches} from './engine.js?v=20261117';
 import {createGraph} from './graph-view.js';
-import {createTrends} from './trends.js';
+import {createTrends} from './trends.js?v=20261117';
 const $=id=>document.getElementById(id),esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const num=n=>n.toLocaleString('en-US'),clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const f={industries:new Set(),secondaries:new Set(),materials:new Set(),uses:new Set(),query:''};
@@ -37,20 +37,34 @@ function draw(){
 function drawAxis(){
  if(view==='graph')return;
  ax.clearRect(0,0,axisW,56);const [left,right]=visibleRange();ax.strokeStyle='#5e5134';ax.beginPath();ax.moveTo(12,31.5);ax.lineTo(axisW-12,31.5);ax.stroke();
- ax.textAlign='left';
- for(const y of layout.years){const start=cam.x+y.start*cam.s,end=cam.x+y.end*cam.s;if(end<0||start>axisW)continue;ax.fillStyle='#ddc894';ax.font='600 15px Arial';ax.fillText(String(y.year),Math.max(12,start+3),22);ax.strokeStyle='#bba26c';ax.beginPath();ax.moveTo(start+.5,27);ax.lineTo(start+.5,37);ax.stroke();}
+ for(const y of layout.years){const start=cam.x+y.start*cam.s;if(start<0||start>axisW)continue;ax.strokeStyle='#bba26c';ax.beginPath();ax.moveTo(start+.5,27);ax.lineTo(start+.5,37);ax.stroke();}
  const spacing=76*cam.s,step=spacing>50?1:spacing>21?2:spacing>10?5:10;
  ax.fillStyle='#9d9275';ax.font='9px Arial';ax.textAlign='center';
  for(const col of layout.columns){const x=cam.x+(col.x+34)*cam.s;if(x<10||x>axisW-10)continue;ax.strokeStyle='#6c5c3c';ax.beginPath();ax.moveTo(x+.5,32);ax.lineTo(x+.5,spacing>30?38:35);ax.stroke();if(col.issue%step===0||spacing>50)ax.fillText(spacing>42?`第${col.issue}期`:String(col.issue),x,51);}
  const ys=layout.years.filter(y=>y.end>=left&&y.start<=right);$('rangeCaption').textContent=ys.length?ys.length===1?`${ys[0].year}年`:`${ys[0].year}—${ys.at(-1).year}年`:'';
  const cs=layout.columns.filter(c=>c.x>=left-76&&c.x<=right);const rangeText=cs.length?`第${cs[0].issue}—${cs.at(-1).issue}期`:'';
  $('rangeCaption').textContent+=' · '+rangeText;
- document.querySelectorAll('[data-year]').forEach(b=>b.classList.toggle('active',ys.length===1&&Number(b.dataset.year)===ys[0].year));
+ const shortcuts=$('yearShortcuts');
+ const fontSize=clamp(Math.floor(axisW/28),11,20),labelWidth=Math.ceil(fontSize*2.4)+5;
+ shortcuts.style.setProperty('--year-label-size',fontSize+'px');
+ let nextX=4,visibleIndex=0;
+ for(const [i,y] of layout.years.entries()){
+  const button=shortcuts.children[i];
+  const visible=ys.includes(y);
+  button.hidden=!visible;
+  if(!visible)continue;
+  const lastX=axisW-4-(ys.length-visibleIndex)*labelWidth;
+  const x=Math.max(nextX,Math.min(Math.max(4,cam.x+y.start*cam.s+3),lastX));
+  button.style.left=x+'px';
+  button.classList.toggle('active',ys.length===1);
+  nextX=x+labelWidth;
+  visibleIndex++;
+ }
 }
 function drawMini(){mx.clearRect(0,0,miniW,35);const ratio=miniW/layout.width;for(const col of layout.columns){const ads=tileColumns.get(col.key)||[],step=32/58;for(let i=0;i<ads.length;i++){mx.globalAlpha=ads[i].matched?.8:.15;mx.fillStyle=ads[i].matched?color(ads[i].ad.primaries[0]):'#77705c';mx.fillRect(col.x*ratio,35-(i+1)*step,Math.max(1,66*ratio),Math.max(.8,step));}mx.globalAlpha=1;}}
 function updateNavigator(){const [l,r]=visibleRange();$('timeWindow').style.left=`${l/layout.width*100}%`;$('timeWindow').style.width=`${(r-l)/layout.width*100}%`;}
 function renderFacets(){
- const names={industry:['产业门类','INDUSTRY INDEX','点击颜色浏览产业；展开可选二级类别。'],material:['材料','MATERIAL INDEX','材料可多选；不明确的材料统一标为“未知”。'],use:['生活用途','LIFE & FUNCTION','用途可多选；与产业、材料条件同时匹配。']};
+ const names={industry:['产业门类','INDUSTRY INDEX','点击颜色浏览产业；展开可选二级类别。'],material:['材料','MATERIAL INDEX','材料可多选；证据不足的材料统一标为“不明确”。'],use:['生活用途','LIFE & FUNCTION','用途可多选；与产业、材料条件同时匹配。']};
  const [name,en,help]=names[mode];$('facetTitle').textContent=name;$('facetEyebrow').textContent=en;$('facetDescription').textContent=help;
  const {counts,secondary}=facetCounts(D.records,f,mode,metric),base=countMatches(D.records,f,metric,mode)||1,max=Math.max(1,...counts.values());
  if(mode==='industry')$('facetList').innerHTML=D.categories.map(c=>{const n=counts.get(c.name)||0;return `<div class="facet-group"><div class="facet-heading"><i class="facet-bar" style="background:${c.color};width:${n/max*100}%"></i><button class="facet-row ${f.industries.has(c.name)?'selected':''}" data-industry="${esc(c.name)}" aria-pressed="${f.industries.has(c.name)}" title="${esc(c.name)}" style="--color:${c.color}"><span class="swatch"></span><span class="facet-name">${esc(c.short)}</span><span class="facet-count">${num(n)}<small>${Math.round(n/base*100)}%</small></span></button>${c.secondaries.length?`<button class="child-toggle" data-expand="${esc(c.name)}" aria-expanded="${expanded.has(c.name)}" aria-label="展开${esc(c.name)}二级类别">${expanded.has(c.name)?'−':'+'}</button>`:''}</div>${expanded.has(c.name)?`<div class="secondaries">${c.secondaries.map(s=>{const key=c.name+'|'+s;return `<button class="secondary ${f.secondaries.has(key)?'selected':''}" data-secondary="${esc(key)}" aria-pressed="${f.secondaries.has(key)}"><span>${esc(s)}</span><em>${secondary.get(key)||0}</em></button>`;}).join('')}</div>`:''}</div>`;}).join('');
@@ -107,7 +121,7 @@ function wire(){
  const ro=new ResizeObserver(()=>resize());ro.observe($('canvasWrap'));window.addEventListener('resize',()=>resize());
 }
 async function start(){
- try{const res=await fetch('data.json?v=1930-1937-3952');if(!res.ok)throw new Error('数据未载入');D=await res.json();for(const c of D.categories)catByName.set(c.name,c);layout=createLayout(D.records);graph=createGraph(D,{showDetail,getFilters:()=>f,getMatches:()=>matches,getMetric:()=>metric});trends=createTrends(D,{getFilters:()=>f,getMetric:()=>metric,onVisibility:()=>requestAnimationFrame(()=>resize())});$('yearShortcuts').innerHTML=layout.years.map(y=>`<button data-year="${y.year}">${y.year}</button>`).join('');resize(true);update();wire();let loaded=0;await Promise.all(Array.from({length:D.meta.atlasCount},(_,n)=>new Promise(resolve=>{const im=new Image();atlases[n]=im;im.onload=()=>{loaded++;requestDraw();resolve();};im.onerror=()=>resolve();im.src=`atlases/${n}.webp?v=1930-1937-3952`;})));$('loading').hidden=true;if(loaded<D.meta.atlasCount)toast('部分缩略图未加载，点击广告仍可查看大图。');requestDraw();}
+ try{const res=await fetch('data.json?v=20261117');if(!res.ok)throw new Error('数据未载入');D=await res.json();for(const c of D.categories)catByName.set(c.name,c);layout=createLayout(D.records);graph=createGraph(D,{showDetail,getFilters:()=>f,getMatches:()=>matches,getMetric:()=>metric});trends=createTrends(D,{getFilters:()=>f,getMetric:()=>metric,onVisibility:()=>requestAnimationFrame(()=>resize())});$('yearShortcuts').innerHTML=layout.years.map(y=>`<button data-year="${y.year}">${y.year}</button>`).join('');resize(true);update();wire();let loaded=0;await Promise.all(Array.from({length:D.meta.atlasCount},(_,n)=>new Promise(resolve=>{const im=new Image();atlases[n]=im;im.onload=()=>{loaded++;requestDraw();resolve();};im.onerror=()=>resolve();im.src=`atlases/${n}.webp?v=1930-1937-3952`;})));$('loading').hidden=true;if(loaded<D.meta.atlasCount)toast('部分缩略图未加载，点击广告仍可查看大图。');requestDraw();}
  catch(err){$('loading').innerHTML='<b>广告数据暂时未能载入</b><small>请刷新页面重试</small>';console.error(err);}
 }
 start();

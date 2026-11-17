@@ -8,7 +8,7 @@ export function productMatches(p, f, except='') {
 export function filterRecords(records, f, except='') {
   return records.filter(r=>{
     if (f.query && !r.searchText.includes(f.query.toLowerCase().trim())) return false;
-    if (!r.products.length) return (except==='industry' || (!f.industries.size&&!f.secondaries.size) || f.industries.has('其他')) && (except==='material'||!f.materials.size||f.materials.has('未知')) && (except==='use'||!f.uses.size||f.uses.has('其他与未明确'));
+    if (!r.products.length) return (except==='industry' || (!f.industries.size&&!f.secondaries.size) || f.industries.has('其他')) && (except==='material'||!f.materials.size||f.materials.has('不明确')) && (except==='use'||!f.uses.size||f.uses.has('其他与未明确'));
     return r.products.some(p=>productMatches(p,f,except));
   });
 }
@@ -29,7 +29,7 @@ export function facetCounts(records, f, mode, metric='ads') {
       for(const p of products){for(const t of unique(mode==='industry'?[p.primary]:mode==='material'?p.materials:p.uses))counts.set(t,(counts.get(t)||0)+1);const k=p.primary+'|'+p.secondary;secondary.set(k,(secondary.get(k)||0)+1);}
     }else{
       const values=unique(products.flatMap(p=>mode==='industry'?[p.primary]:mode==='material'?p.materials:p.uses));
-      if (!products.length && !r.products.length) values.push(mode==='industry'?'其他':mode==='material'?'未知':'其他与未明确');
+      if (!products.length && !r.products.length) values.push(mode==='industry'?'其他':mode==='material'?'不明确':'其他与未明确');
       for (const t of values) counts.set(t,(counts.get(t)||0)+1);
       for (const t of unique(products.map(p=>p.primary+'|'+p.secondary))) secondary.set(t,(secondary.get(t)||0)+1);
     }
