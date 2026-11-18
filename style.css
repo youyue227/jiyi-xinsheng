@@ -50,3 +50,5 @@
 @media(max-width:560px){.header-actions .search{position:static;width:calc(100% - 170px);min-width:140px;padding:8px;gap:6px}.search-label{font-size:11px}.header-actions .search input{font-size:11px}.timeline-caption{align-items:flex-start}.timeline-caption>div{flex-wrap:wrap;gap:5px 8px}.drag-tip{max-width:116px;flex-shrink:0}#allYears{font-size:10px}}
 
 @media(max-width:560px){.header-actions .search{flex:1;min-width:0;width:auto}.search svg{display:none}}
+
+@media(min-width:901px) and (max-width:1200px){.masthead{gap:12px}.brand{width:180px}.entry{min-width:80px}.header-actions .search{width:180px}}
