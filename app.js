@@ -1,6 +1,6 @@
-import {unique,productMatches,filterRecords,facetCounts,createLayout,layoutVisible,countMatches} from './engine.js?v=20261118';
-import {createGraph} from './graph-view.js?v=20261118';
-import {createTrends} from './trends.js?v=20261118';
+import {unique,productMatches,filterRecords,facetCounts,createLayout,layoutVisible,countMatches} from './engine.js?v=20261118-2';
+import {createGraph} from './graph-view.js?v=20261118-2';
+import {createTrends} from './trends.js?v=20261118-2';
 const $=id=>document.getElementById(id),esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const num=n=>n.toLocaleString('en-US'),clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const f={industries:new Set(),secondaries:new Set(),materials:new Set(),uses:new Set(),year:null,query:''};
@@ -123,7 +123,7 @@ function wire(){
  const ro=new ResizeObserver(()=>resize());ro.observe($('canvasWrap'));window.addEventListener('resize',()=>resize());
 }
 async function start(){
- try{const res=await fetch('data.json?v=20261118');if(!res.ok)throw new Error('数据未载入');D=await res.json();for(const c of D.categories)catByName.set(c.name,c);layout=createLayout(D.records);graph=createGraph(D,{showDetail,getFilters:()=>f,getMatches:()=>matches,getMetric:()=>metric});trends=createTrends(D,{getFilters:()=>f,getMetric:()=>metric,onVisibility:()=>requestAnimationFrame(()=>resize())});$('yearShortcuts').innerHTML=layout.years.map(y=>`<button data-year="${y.year}">${y.year}</button>`).join('');resize(true);update();wire();let loaded=0;await Promise.all(Array.from({length:D.meta.atlasCount},(_,n)=>new Promise(resolve=>{const im=new Image();atlases[n]=im;im.onload=()=>{loaded++;requestDraw();resolve();};im.onerror=()=>resolve();im.src=`atlases/${n}.webp?v=1930-1937-3952`;})));$('loading').hidden=true;if(loaded<D.meta.atlasCount)toast('部分缩略图未加载，点击广告仍可查看大图。');requestDraw();}
+ try{const res=await fetch('data.json?v=20261118-2');if(!res.ok)throw new Error('数据未载入');D=await res.json();for(const c of D.categories)catByName.set(c.name,c);layout=createLayout(D.records);graph=createGraph(D,{showDetail,getFilters:()=>f,getMatches:()=>matches,getMetric:()=>metric});trends=createTrends(D,{getFilters:()=>f,getMetric:()=>metric,onVisibility:()=>requestAnimationFrame(()=>resize())});$('yearShortcuts').innerHTML=layout.years.map(y=>`<button data-year="${y.year}">${y.year}</button>`).join('');resize(true);update();wire();let loaded=0;await Promise.all(Array.from({length:D.meta.atlasCount},(_,n)=>new Promise(resolve=>{const im=new Image();atlases[n]=im;im.onload=()=>{loaded++;requestDraw();resolve();};im.onerror=()=>resolve();im.src=`atlases/${n}.webp?v=1930-1937-3952`;})));$('loading').hidden=true;if(loaded<D.meta.atlasCount)toast('部分缩略图未加载，点击广告仍可查看大图。');requestDraw();}
  catch(err){$('loading').innerHTML='<b>广告数据暂时未能载入</b><small>请刷新页面重试</small>';console.error(err);}
 }
 start();

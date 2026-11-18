@@ -1,4 +1,4 @@
-import {createSearchMatcher} from './search.js?v=20261118';
+import {createSearchMatcher} from './search.js?v=20261118-2';
 export const unique = a => [...new Set(a)];
 export function productMatches(p, f, except='') {
   if (except!=='industry' && (f.industries.size || f.secondaries.size) && !f.industries.has(p.primary) && !f.secondaries.has(p.primary+'|'+p.secondary)) return false;

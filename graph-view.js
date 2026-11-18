@@ -1,4 +1,4 @@
-import {buildHierarchy,graphCounts,graphMentionCounts,orbitLayout,compactFan,graphScene} from './graph.js?v=20261118';
+import {buildHierarchy,graphCounts,graphMentionCounts,orbitLayout,compactFan,graphScene} from './graph.js?v=20261118-2';
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const key=path=>JSON.stringify(path);
 export function createGraph(data,{showDetail,getFilters,getMatches,getMetric}){

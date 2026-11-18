@@ -1,4 +1,4 @@
-import {annualCounts} from './engine.js?v=20261118';
+import {annualCounts} from './engine.js?v=20261118-2';
 import {createComparisonPicker} from './comparison-picker.js';
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fresh=()=>({industries:new Set(),secondaries:new Set(),materials:new Set(),uses:new Set(),query:''});

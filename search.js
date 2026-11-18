@@ -13,8 +13,10 @@ function searchFields(record) {
       product.name, product.primary, product.secondary,
       ...product.materials, ...product.uses,
     ]),
-    String(record.year), `第${record.issue}期`, `第${record.page}页`,
+    String(record.year), `${record.year}年`, `第${record.issue}期`, `第${record.page}页`,
     `${record.year}-${record.issue}-${record.page}`,
+    `${record.year}年第${record.issue}期第${record.page}页`,
+    `${record.year}年${record.issue}期${record.page}页`,
     `${String(record.year).slice(-2)}-${record.issue}`,
     `${String(record.year).slice(-2)}-${record.issue}-${record.page}`,
   ].map(normalizeSearch).filter(Boolean);
