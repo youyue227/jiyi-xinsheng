@@ -1,3 +1,4 @@
+import {createSearchMatcher} from './search.js?v=20261118';
 export const unique = a => [...new Set(a)];
 export function productMatches(p, f, except='') {
   if (except!=='industry' && (f.industries.size || f.secondaries.size) && !f.industries.has(p.primary) && !f.secondaries.has(p.primary+'|'+p.secondary)) return false;
@@ -6,8 +7,10 @@ export function productMatches(p, f, except='') {
   return true;
 }
 export function filterRecords(records, f, except='') {
+  const matchesQuery=createSearchMatcher(f.query);
   return records.filter(r=>{
-    if (f.query && !r.searchText.includes(f.query.toLowerCase().trim())) return false;
+    if (f.year!=null && r.year!==Number(f.year)) return false;
+    if (!matchesQuery(r)) return false;
     if (!r.products.length) return (except==='industry' || (!f.industries.size&&!f.secondaries.size) || f.industries.has('其他')) && (except==='material'||!f.materials.size||f.materials.has('不明确')) && (except==='use'||!f.uses.size||f.uses.has('其他与未明确'));
     return r.products.some(p=>productMatches(p,f,except));
   });

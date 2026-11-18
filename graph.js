@@ -1,4 +1,4 @@
-import {productMatches} from './engine.js';
+import {productMatches} from './engine.js?v=20261118';
 const key=path=>JSON.stringify(path);
 const unmarked=['其他','未标注二级','未确认产品'];
 const periodKey=r=>r.year+'|'+r.issue;
@@ -6,7 +6,7 @@ export function buildHierarchy(data){
  const nodes=new Map(),records=new Map(data.records.map(r=>[r.id,r]));
  const root={key:key([]),path:[],level:0,label:'全部广告',short:'全部广告',color:'#eee9dd',children:[],ads:new Set(),mentions:0};nodes.set(root.key,root);
  const categories=new Map(data.categories.map(c=>[c.name,c]));
- function add(path,id,mention=true){let parent=root;root.ads.add(id);if(mention)root.mentions++;for(let level=1;level<=4;level++){const sub=path.slice(0,level),k=key(sub);if(!nodes.has(k)){const c=categories.get(path[0]),[year,issue]=level===4?sub[3].split('|').map(Number):[];const n={key:k,path:sub,level,label:level===4?`${year}年第${issue}期`:sub.at(-1),short:level===4?String(year).slice(-2)+'-'+issue:level===1?(c?.short||sub[0]):sub.at(-1),year,issue,color:c?.color||'#84868D',children:[],ads:new Set(),mentions:0};nodes.set(k,n);parent.children.push(n);}const n=nodes.get(k);n.ads.add(id);if(mention)n.mentions++;parent=n;}}
+ function add(path,id,mention=true){let parent=root;root.ads.add(id);if(mention)root.mentions++;for(let level=1;level<=4;level++){const sub=path.slice(0,level),k=key(sub);if(!nodes.has(k)){const c=categories.get(path[0]),[year,issue]=level===4?sub[3].split('|').map(Number):[];const n={key:k,path:sub,level,label:level===4?`${year}年第${issue}期`:sub.at(-1),short:level===4?String(year)+'年第'+issue+'期':level===1?(c?.short||sub[0]):sub.at(-1),year,issue,color:c?.color||'#84868D',children:[],ads:new Set(),mentions:0};nodes.set(k,n);parent.children.push(n);}const n=nodes.get(k);n.ads.add(id);if(mention)n.mentions++;parent=n;}}
  for(const r of data.records){if(!r.products.length)add([...unmarked,periodKey(r)],r.id,false);for(const p of r.products)add([p.primary,p.secondary,p.name,periodKey(r)],r.id);}
  root.children.sort((a,b)=>data.categories.findIndex(c=>c.name===a.label)-data.categories.findIndex(c=>c.name===b.label));
  for(const n of nodes.values())if(n.level===3)n.children.sort((a,b)=>a.year-b.year||a.issue-b.issue);
